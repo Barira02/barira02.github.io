@@ -30,16 +30,16 @@ const SITE = {
     // EDIT: swap the search-page links below for your real profile URLs
     links: {
       linkedin:     "https://www.linkedin.com/in/brashid02/",
-      scholar:      "https://scholar.google.com/citations?user=Sm7FDpQAAAAJ&hl=en&oi=sra",
+      scholar:      "https://scholar.google.com/scholar?q=%22Barira+Rashid%22",
       researchgate: "https://www.researchgate.net/profile/Barira-Rashid",
-      orcid:        "https://orcid.org/0000-0002-4601-1675"
+      orcid:        "https://orcid.org/orcid-search/search?searchQuery=Barira%20Rashid"
     },
 
     // optional: put a PDF at assets/cv.pdf and set this to "assets/cv.pdf"
     cv: ""
   },
 
-/* -------------------------------------------------------------- OPEN DATA */
+  /* -------------------------------------------------------------- OPEN DATA */
   /* Published datasets & open packages.
      url:       "" => card shows a tidy "link pending" state instead of a dead link
      citation:  "" => the "Copy citation" button is hidden for that card
@@ -62,7 +62,7 @@ const SITE = {
       title:    "Landslide Risk Data Package",
       blurb:    "An open data studio package mapping landslide susceptibility from Earth-observation data, developed with Earth-science review boards, USGS, and humanitarian NGOs.",
       meta:     ["Open access", "Data studio"],
-      url:      "https://nasalifelines.org/hfs-data-series/landslide-risk-and-monitoring/",// EDIT: paste the package / repository URL
+      url:      "",                 // EDIT: paste the package / repository URL
       linkLabel:"Open package ↗",
       citation: "",                 // EDIT: optional — paste a citation to enable the copy button
       thumb:    "terrain"
@@ -72,7 +72,7 @@ const SITE = {
       title:    "Food Security Data Package",
       blurb:    "An open data studio package turning Earth-observation data into food-security insight for decision-makers without geospatial training.",
       meta:     ["Open access", "Data studio"],
-      url:      "https://nasalifelines.org/hfs-data-series/agriculture-food-security-environmental-monitoring-applications/",                 // EDIT: paste the package / repository URL
+      url:      "",                 // EDIT: paste the package / repository URL
       linkLabel:"Open package ↗",
       citation: "",                 // EDIT
       thumb:    "fields"
@@ -213,7 +213,7 @@ const SITE = {
   /* -------------------------------------------------- SCIENCE COMMUNICATION */
   /* icon options: "wave" | "layers" | "podium" | "map"                        */
   outreach: [
-    { icon: "wave",   title: "PhosForUs Podcast",          blurb: "Co-created podcast translating phosphorus science and sustainability for a general audience.", url: "https://open.spotify.com/show/5nECIx73y9bkGT8RUQkZSQ", linkLabel: "Listen ↗" },
+    { icon: "wave",   title: "PhosForUs Podcast",          blurb: "Co-created podcast translating phosphorus science and sustainability for a general audience.", url: "", linkLabel: "Listen ↗" },
     { icon: "layers", title: "NASA LifeLines Data Studio", blurb: "Open-access geospatial modules on food security and landslide risk, built with Earth-science review boards, USGS, and humanitarian NGOs.", url: "https://nasalifelines.org/current-fellows/", linkLabel: "Fellows page ↗" },
     { icon: "podium", title: "Talks & School Outreach",    blurb: "Invited speaker events and K–12 engagement introducing students to Earth observation and GIS.", url: "", linkLabel: "" }
   ],

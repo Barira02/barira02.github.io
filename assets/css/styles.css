@@ -118,22 +118,30 @@ nav.scrolled .nav-links a:hover{color:var(--rose-ink);}
 .leaflet-control-layers-toggle{background-color:rgba(20,17,56,.92);}
 .leaflet-control-layers label{margin:2px 0;}
 
-/* ============================= STORY MAPS ================================ */
-.sm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-.sm-card{border:1px solid var(--line);background:var(--paper-2);display:flex;flex-direction:column;
+/* ============================== OPEN DATA ================================ */
+.od-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.od-card{border:1px solid var(--line);background:var(--paper-2);display:flex;flex-direction:column;
   transition:transform .22s,box-shadow .22s,border-color .22s;}
-.sm-card.live:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(20,17,56,.45);border-color:var(--rose);}
-.sm-thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:1px solid var(--line);background:#0C0A24;}
-.sm-thumb svg{display:block;width:100%;height:100%;}
-.sm-body{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;}
-.sm-kicker{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink);}
-.sm-card h3{font-size:1.18rem;margin:.5rem 0;line-height:1.2;}
-.sm-card p{margin:0;color:var(--ink-soft);font-size:.93rem;line-height:1.5;flex:1;}
-.sm-go{margin-top:1rem;font-family:var(--mono);font-size:.71rem;letter-spacing:.05em;color:var(--rose-ink);
-  display:inline-flex;align-items:center;gap:.4em;}
-.sm-card.live:hover .sm-go{color:var(--gold-ink);}
-.sm-pending{margin-top:1rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.05em;color:var(--gold-ink);
-  background:#FFF8E8;border:1px dashed var(--gold);padding:.4em .6em;display:inline-block;}
+.od-card.live:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(20,17,56,.45);border-color:var(--rose);}
+.od-thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:1px solid var(--line);background:#0C0A24;}
+.od-thumb svg{display:block;width:100%;height:100%;}
+.od-body{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1;}
+.od-kicker{font-family:var(--mono);font-size:.63rem;letter-spacing:.13em;text-transform:uppercase;color:var(--teal-ink);}
+.od-card h3{font-size:1.14rem;margin:.5rem 0 .6rem;line-height:1.22;}
+.od-chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.75rem;}
+.od-chip{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-soft);border:1px solid var(--line);background:var(--line-2);padding:.25em .5em;}
+.od-card p{margin:0;color:var(--ink-soft);font-size:.9rem;line-height:1.5;flex:1;}
+.od-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin-top:1.1rem;}
+.od-go{font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;color:var(--rose-ink);
+  border-bottom:1px solid transparent;transition:color .15s,border-color .15s;}
+.od-card.live:hover .od-go{color:var(--gold-ink);border-color:var(--gold-ink);}
+.od-cite{font-family:var(--mono);font-size:.64rem;letter-spacing:.05em;color:var(--ink-soft);cursor:pointer;
+  background:none;border:1px solid var(--line);padding:.35em .6em;transition:all .15s;}
+.od-cite:hover{border-color:var(--teal-ink);color:var(--teal-ink);}
+.od-cite.ok{border-color:var(--teal);color:var(--teal-ink);background:#E9FBF8;}
+.od-pending{font-family:var(--mono);font-size:.63rem;letter-spacing:.05em;color:var(--gold-ink);
+  background:#FFF8E8;border:1px dashed var(--gold);padding:.35em .6em;}
 
 /* ================================ ABOUT ================================== */
 .about-grid{display:grid;grid-template-columns:1fr;gap:2rem;}
@@ -217,7 +225,7 @@ a.todo:hover{border-bottom:1px solid var(--gold-ink);}
 
 /* ============================ RESPONSIVE ================================= */
 @media (max-width:960px){
-  .sm-grid{grid-template-columns:1fr 1fr;}
+  .od-grid{grid-template-columns:1fr 1fr;}
   .out-list{grid-template-columns:1fr 1fr;}
 }
 @media (max-width:860px){
@@ -225,7 +233,7 @@ a.todo:hover{border-bottom:1px solid var(--gold-ink);}
   section{padding:74px 0;}
   .hero{padding:120px 0 56px;}
   .hero-grid,.about-grid{grid-template-columns:1fr;gap:38px;}
-  .cards,.honors,.sm-grid,.out-list{grid-template-columns:1fr;}
+  .cards,.honors,.od-grid,.out-list{grid-template-columns:1fr;}
   #journey{height:340px;}
   .pub{grid-template-columns:1fr;gap:.5rem;}
   .pub .yr{padding-top:0;}
@@ -233,5 +241,5 @@ a.todo:hover{border-bottom:1px solid var(--gold-ink);}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   .reveal{opacity:1;transform:none;transition:none;}
-  .btn:hover,.btn.solid:hover,.sm-card.live:hover{transform:none;}
+  .btn:hover,.btn.solid:hover,.od-card.live:hover{transform:none;}
 }

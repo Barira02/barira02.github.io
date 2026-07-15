@@ -23,7 +23,23 @@
     map:    '<svg class="out-ico" viewBox="0 0 34 30" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="28" height="22"/><path d="M3 11h28M12 4v22" opacity=".6"/><circle cx="21" cy="18" r="3" fill="#FFC24B" stroke="none"/></svg>'
   };
 
+  // classified-raster thumbnail, generated as contiguous regions (not noise)
+  function lulcThumb() {
+    var C = ["#FF5C8A", "#FF87A9", "#E23E6E", "#1FB7C4", "#0E1236", "#FFC24B"];
+    var cols = 32, rows = 20, cw = 10, ch = 10, out = "";
+    for (var y = 0; y < rows; y++) {
+      for (var x = 0; x < cols; x++) {
+        var f = Math.sin(x * 0.34) + Math.cos(y * 0.5 + x * 0.12) + Math.sin((x + y) * 0.22) + 2;
+        var i = Math.min(C.length - 2, Math.max(0, Math.floor(f / 4 * (C.length - 1))));
+        var c = (Math.sin(x * 1.7 + y * 2.3) > 0.988) ? C[5] : C[i];
+        out += '<rect x="' + (x * cw) + '" y="' + (y * ch) + '" width="' + cw + '" height="' + ch + '" fill="' + c + '"/>';
+      }
+    }
+    return '<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">' + out + '</svg>';
+  }
+
   var THUMBS = {
+    lulc: lulcThumb(),
     fields:
       '<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="200" fill="#1FB7C4"/>' +
       '<rect x="10" y="12" width="96" height="62" fill="#FF5C8A"/><rect x="112" y="12" width="70" height="40" fill="#0E1236"/>' +
@@ -77,25 +93,48 @@
       '<div class="cta-row">' + btns + '</div>';
   }
 
-  /* ----------------------------------------------------------- STORY MAPS */
-  function renderStorymaps() {
-    var grid = $("sm-grid");
+  /* ------------------------------------------------------------- OPEN DATA */
+  function renderOpenData() {
+    var grid = $("od-grid");
     if (!grid) return;
-    grid.innerHTML = (SITE.storymaps || []).map(function (s) {
-      var live = s.url && s.url.trim().length;
-      var inner =
-        '<div class="sm-thumb">' + (THUMBS[s.thumb] || THUMBS.fields) + '</div>' +
-        '<div class="sm-body">' +
-          '<span class="sm-kicker">' + esc(s.kicker) + '</span>' +
-          '<h3>' + esc(s.title) + '</h3>' +
-          '<p>' + esc(s.blurb) + '</p>' +
-          (live ? '<span class="sm-go">Open the story ↗</span>'
-                : '<span class="sm-pending">Add URL in data.js</span>') +
+    grid.innerHTML = (SITE.opendata || []).map(function (d, i) {
+      var live = d.url && d.url.trim().length;
+      var chips = (d.meta || []).map(function (m) { return '<span class="od-chip">' + esc(m) + '</span>'; }).join("");
+      var actions = live
+        ? '<a class="od-go" href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.linkLabel || "Open dataset ↗") + '</a>'
+        : '<span class="od-pending">Add URL in data.js</span>';
+      if (d.citation && d.citation.trim().length) {
+        actions += '<button class="od-cite" type="button" data-i="' + i + '">Copy citation</button>';
+      }
+      return '<div class="od-card' + (live ? " live" : "") + '">' +
+          '<div class="od-thumb">' + (THUMBS[d.thumb] || THUMBS.lulc) + '</div>' +
+          '<div class="od-body">' +
+            '<span class="od-kicker">' + esc(d.kicker) + '</span>' +
+            '<h3>' + esc(d.title) + '</h3>' +
+            (chips ? '<div class="od-chips">' + chips + '</div>' : "") +
+            '<p>' + esc(d.blurb) + '</p>' +
+            '<div class="od-actions">' + actions + '</div>' +
+          '</div>' +
         '</div>';
-      return live
-        ? '<a class="sm-card live" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + inner + '</a>'
-        : '<div class="sm-card">' + inner + '</div>';
     }).join("");
+
+    // copy-citation buttons
+    grid.querySelectorAll(".od-cite").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var cite = SITE.opendata[+btn.getAttribute("data-i")].citation;
+        var done = function () {
+          var t = btn.textContent;
+          btn.textContent = "Copied ✓";
+          btn.classList.add("ok");
+          setTimeout(function () { btn.textContent = t; btn.classList.remove("ok"); }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(cite).then(done, function () { window.prompt("Copy the citation:", cite); });
+        } else {
+          window.prompt("Copy the citation:", cite);
+        }
+      });
+    });
   }
 
   /* ---------------------------------------------------------------- ABOUT */
@@ -154,7 +193,7 @@
     var el = $("out-list");
     if (!el) return;
     el.innerHTML = (SITE.outreach || []).map(function (o) {
-      var link = "https://open.spotify.com/show/5nECIx73y9bkGT8RUQkZSQ";
+      var link = "";
       if (o.url)                 link = '<a class="todo" href="' + esc(o.url) + '" target="_blank" rel="noopener">' + esc(o.linkLabel || "Open ↗") + '</a>';
       else if (o.linkLabel)      link = '<span class="todo">↗ add link in data.js</span>';
       return '<div class="out">' + (OUT_ICONS[o.icon] || OUT_ICONS.map) +
@@ -190,7 +229,7 @@
     if (L.orcid)        links += '<a href="' + esc(L.orcid) + '" target="_blank" rel="noopener">ORCID</a>';
 
     el.innerHTML =
-      '<div class="legend hollow">Legend · Contact</div>' +
+      '<div class="legend hollow">Contact</div>' +
       '<h2 class="section-title">' + c.titleHTML + '</h2>' +
       '<p class="lead">' + esc(c.lead) + '</p>' +
       '<a class="mail" href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a>' +
@@ -299,7 +338,7 @@
   /* ------------------------------------------------------------------ RUN */
   function boot() {
     if (typeof SITE === "undefined") { console.error("data.js failed to load"); return; }
-    renderHero(); renderStorymaps(); renderAbout(); renderResearch();
+    renderHero(); renderOpenData(); renderAbout(); renderResearch();
     renderPubs(); renderHonors(); renderOutreach(); renderEducation(); renderContact();
     initNav(); initReveal();
   }

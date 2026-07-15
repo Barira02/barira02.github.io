@@ -50,7 +50,7 @@ You don't touch HTML or CSS for normal updates.
 |---|---|
 | Add a publication | `publications:` — copy a `{ ... }` block, edit it |
 | Add an award | `honors:` |
-| Link a story map | `storymaps:` → paste into `url: ""` |
+| Add / link a dataset | `opendata:` → paste into `url: ""` |
 | Fix my ORCID / Scholar link | `profile.links` |
 | Change my tagline or bio | `profile.thesis` / `about.paragraphs` |
 | Add a degree or move a map pin | `degrees:` (drives **both** the map pins and the timeline) |
@@ -92,7 +92,7 @@ Search the project for `YOURUSERNAME` and replace it in:
 
 Then:
 
-- [ ] Fill in the three `storymaps` URLs in `data.js`
+- [ ] Add the two NASA LifeLines package URLs in `data.js` (`opendata:`)
 - [ ] Replace the ORCID and Scholar **search links** with your real profile URLs
 - [ ] Add the PhosForUs podcast URL (`outreach`)
 - [ ] Verify author order on all publications
