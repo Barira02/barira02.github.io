@@ -1,5 +1,5 @@
 /* =============================================================================
-   main.js — renders the page from data.js and builds the journey map.
+   main.js — renders the page from data.js and builds the map.
    You shouldn't need to edit this file. Content lives in data.js.
    ========================================================================== */
 (function () {
@@ -7,6 +7,7 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? "" : s); };
+  var slug = function (s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-"); };
 
   /* ------------------------------------------------------------- ICON SETS */
   var RESEARCH_ICONS = {
@@ -14,13 +15,6 @@
     water:  '<path d="M24 6c7 9 12 15 12 22a12 12 0 0 1-24 0c0-7 5-13 12-22Z"/><path d="M18 30c2 3 10 3 12 0" stroke="#0B8A8F"/>',
     network:'<circle cx="10" cy="14" r="4"/><circle cx="38" cy="10" r="4"/><circle cx="24" cy="30" r="4" stroke="#C42E63"/><circle cx="14" cy="40" r="3.5"/><path d="M13 16 21 28M35 13 27 27M22 33 16 37" opacity=".65"/>',
     globe:  '<circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c6 6 6 30 0 36M24 6c-6 6-6 30 0 36" opacity=".5"/><circle cx="24" cy="24" r="3" fill="#FFC24B" stroke="none"/>'
-  };
-
-  var OUT_ICONS = {
-    wave:   '<svg class="out-ico" viewBox="0 0 120 30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 15h6M16 15h4M26 8v14M34 3v24M42 10v10M50 6v18M58 12v6M66 4v22M74 9v12M82 2v26M90 11v8M98 6v18M106 13v4M114 15h2"/></svg>',
-    layers: '<svg class="out-ico" viewBox="0 0 40 30" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11 20 4l16 7-16 7Z"/><path d="M4 17l16 7 16-7" opacity=".6"/><path d="M4 23l16 7 16-7" opacity=".35"/></svg>',
-    podium: '<svg class="out-ico" viewBox="0 0 34 30" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 22V8l11-4 11 4v14"/><path d="M11 22v-8h12v8" opacity=".7"/><path d="M4 22h26"/></svg>',
-    map:    '<svg class="out-ico" viewBox="0 0 34 30" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="28" height="22"/><path d="M3 11h28M12 4v22" opacity=".6"/><circle cx="21" cy="18" r="3" fill="#FFC24B" stroke="none"/></svg>'
   };
 
   // classified-raster thumbnail, generated as contiguous regions (not noise)
@@ -63,14 +57,29 @@
       '<ellipse cx="160" cy="100" rx="30" ry="76"/><ellipse cx="160" cy="100" rx="56" ry="76"/>' +
       '<path d="M84 100h152M96 62h128M96 138h128"/></g>' +
       '<circle cx="132" cy="76" r="7" fill="#FF5C8A"/><circle cx="192" cy="118" r="7" fill="#FFC24B"/>' +
-      '<circle cx="176" cy="66" r="5" fill="#FF87A9"/><circle cx="118" cy="128" r="5" fill="#19C7B6"/></svg>'
+      '<circle cx="176" cy="66" r="5" fill="#FF87A9"/><circle cx="118" cy="128" r="5" fill="#19C7B6"/></svg>',
+    wave:
+      '<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="200" fill="#141138"/>' +
+      '<g stroke="#FF5C8A" stroke-width="4" stroke-linecap="round">' +
+      '<path d="M14 100h0M30 84v32M46 68v64M62 92v16M78 58v84M94 76v48M110 44v112M126 88v24M142 62v76M158 30v140"/>' +
+      '<path d="M174 70v60M190 50v100M206 86v28M222 60v80M238 40v120M254 80v40M270 66v68M286 90v20M302 100h0" stroke="#19C7B6"/></g>' +
+      '<circle cx="160" cy="100" r="9" fill="#FFC24B"/></svg>',
+    essay:
+      '<svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="200" fill="#0E1236"/>' +
+      '<rect x="70" y="18" width="180" height="164" fill="#F7F6FB"/>' +
+      '<rect x="88" y="40" width="94" height="9" fill="#C42E63"/>' +
+      '<g fill="#565175">' +
+      '<rect x="88" y="66" width="144" height="5"/><rect x="88" y="80" width="144" height="5"/><rect x="88" y="94" width="120" height="5"/>' +
+      '<rect x="88" y="116" width="144" height="5"/><rect x="88" y="130" width="144" height="5"/><rect x="88" y="144" width="98" height="5"/></g>' +
+      '<rect x="88" y="160" width="40" height="6" fill="#19C7B6"/></svg>'
   };
 
   /* ----------------------------------------------------------------- HERO */
   function renderHero() {
     var p = SITE.profile, el = $("hero-copy");
     if (!el) return;
-    document.getElementById("brand-name").textContent = p.firstName + " " + p.lastName;
+    var brand = $("brand-name");
+    if (brand) brand.textContent = p.firstName + " " + p.lastName;
 
     var meta = (p.meta || []).map(function (m) {
       return '<span><b>' + esc(m.label) + '</b> ' + esc(m.value) + '</span>';
@@ -93,48 +102,74 @@
       '<div class="cta-row">' + btns + '</div>';
   }
 
-  /* ------------------------------------------------------------- OPEN DATA */
-  function renderOpenData() {
-    var grid = $("od-grid");
+  /* -------------------------------------------------- SCIENCE COMMUNICATION */
+  function renderSciComm() {
+    var grid = $("sc-grid"), bar = $("sc-filters");
     if (!grid) return;
-    grid.innerHTML = (SITE.opendata || []).map(function (d, i) {
+    var items = SITE.scicomm || [];
+
+    // filter buttons, generated from the types actually present
+    if (bar) {
+      var types = [];
+      items.forEach(function (i) { if (types.indexOf(i.type) === -1) types.push(i.type); });
+      bar.innerHTML = '<button class="sc-filter active" data-f="all">All <span>' + items.length + '</span></button>' +
+        types.map(function (t) {
+          var n = items.filter(function (i) { return i.type === t; }).length;
+          return '<button class="sc-filter" data-f="' + slug(t) + '">' + esc(t) + ' <span>' + n + '</span></button>';
+        }).join("");
+    }
+
+    grid.innerHTML = items.map(function (d, i) {
       var live = d.url && d.url.trim().length;
       var chips = (d.meta || []).map(function (m) { return '<span class="od-chip">' + esc(m) + '</span>'; }).join("");
-      var actions = live
-        ? '<a class="od-go" href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.linkLabel || "Open dataset ↗") + '</a>'
-        : '<span class="od-pending">Add URL in data.js</span>';
+      var actions = "";
+      if (live) actions += '<a class="od-go" href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.linkLabel || "Open ↗") + '</a>';
+      else if (d.linkLabel) actions += '<span class="od-pending">Add URL in data.js</span>';
       if (d.citation && d.citation.trim().length) {
         actions += '<button class="od-cite" type="button" data-i="' + i + '">Copy citation</button>';
       }
-      return '<div class="od-card' + (live ? " live" : "") + '">' +
-          '<div class="od-thumb">' + (THUMBS[d.thumb] || THUMBS.lulc) + '</div>' +
+      return '<div class="od-card' + (live ? " live" : "") + '" data-type="' + slug(d.type) + '">' +
+          '<div class="od-thumb">' + (THUMBS[d.thumb] || THUMBS.lulc) +
+            '<span class="od-badge t-' + slug(d.type) + '">' + esc(d.type) + '</span>' +
+          '</div>' +
           '<div class="od-body">' +
             '<span class="od-kicker">' + esc(d.kicker) + '</span>' +
             '<h3>' + esc(d.title) + '</h3>' +
             (chips ? '<div class="od-chips">' + chips + '</div>' : "") +
             '<p>' + esc(d.blurb) + '</p>' +
-            '<div class="od-actions">' + actions + '</div>' +
+            (actions ? '<div class="od-actions">' + actions + '</div>' : "") +
           '</div>' +
         '</div>';
     }).join("");
 
-    // copy-citation buttons
+    // copy-citation
     grid.querySelectorAll(".od-cite").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var cite = SITE.opendata[+btn.getAttribute("data-i")].citation;
+        var cite = SITE.scicomm[+btn.getAttribute("data-i")].citation;
         var done = function () {
           var t = btn.textContent;
-          btn.textContent = "Copied ✓";
-          btn.classList.add("ok");
+          btn.textContent = "Copied ✓"; btn.classList.add("ok");
           setTimeout(function () { btn.textContent = t; btn.classList.remove("ok"); }, 1800);
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(cite).then(done, function () { window.prompt("Copy the citation:", cite); });
-        } else {
-          window.prompt("Copy the citation:", cite);
-        }
+        } else { window.prompt("Copy the citation:", cite); }
       });
     });
+
+    // filtering
+    if (bar) {
+      bar.querySelectorAll(".sc-filter").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var f = btn.getAttribute("data-f");
+          bar.querySelectorAll(".sc-filter").forEach(function (b) { b.classList.remove("active"); });
+          btn.classList.add("active");
+          grid.querySelectorAll(".od-card").forEach(function (c) {
+            c.style.display = (f === "all" || c.getAttribute("data-type") === f) ? "" : "none";
+          });
+        });
+      });
+    }
   }
 
   /* ---------------------------------------------------------------- ABOUT */
@@ -188,25 +223,11 @@
     }).join("");
   }
 
-  /* ------------------------------------------------------------- OUTREACH */
-  function renderOutreach() {
-    var el = $("out-list");
-    if (!el) return;
-    el.innerHTML = (SITE.outreach || []).map(function (o) {
-      var link = "";
-      if (o.url)                 link = '<a class="todo" href="' + esc(o.url) + '" target="_blank" rel="noopener">' + esc(o.linkLabel || "Open ↗") + '</a>';
-      else if (o.linkLabel)      link = '<span class="todo">↗ add link in data.js</span>';
-      return '<div class="out">' + (OUT_ICONS[o.icon] || OUT_ICONS.map) +
-        '<h3>' + esc(o.title) + '</h3><p>' + esc(o.blurb) + '</p>' + link + '</div>';
-    }).join("");
-  }
-
   /* ------------------------------------------------------------ EDUCATION */
   function renderEducation() {
     var el = $("edu-list");
     if (!el) return;
-    var d = (SITE.degrees || []).slice();
-    // newest first for reading; pin numbers stay chronological
+    var d = (SITE.qualifications || []).slice();
     el.innerHTML = d.map(function (x, i) { x._n = i + 1; return x; }).reverse().map(function (x) {
       return '<div class="edu-item' + (x.current ? " current" : "") + '">' +
         '<div class="edu-n">' + (x._n < 10 ? "0" + x._n : x._n) + '</div>' +
@@ -227,7 +248,6 @@
     if (L.researchgate) links += '<a href="' + esc(L.researchgate) + '" target="_blank" rel="noopener">ResearchGate</a>';
     if (L.scholar)      links += '<a href="' + esc(L.scholar) + '" target="_blank" rel="noopener">Google Scholar</a>';
     if (L.orcid)        links += '<a href="' + esc(L.orcid) + '" target="_blank" rel="noopener">ORCID</a>';
-
     el.innerHTML =
       '<div class="legend hollow">Contact</div>' +
       '<h2 class="section-title">' + c.titleHTML + '</h2>' +
@@ -246,7 +266,7 @@
     window.addEventListener("scroll", upd, { passive: true });
   }
 
-  /* --------------------------------------------------------- JOURNEY MAP */
+  /* ------------------------------------------------------------------ MAP */
   function haversine(a, b) {
     var R = 6371, toRad = function (x) { return x * Math.PI / 180; };
     var dLat = toRad(b[0] - a[0]), dLon = toRad(b[1] - a[1]);
@@ -278,13 +298,22 @@
       if (s) s.textContent = "Map loads when online";
       return;
     }
-    var D = SITE.degrees || [], S = SITE.fieldSites || [];
+    var Q = SITE.qualifications || [], A = SITE.affiliations || [];
+    var lab = SITE.mapLabels || { qualifications: "Qualifications", affiliations: "Affiliations" };
 
-    // total distance travelled, shown in the panel caption
+    // countries + distance, both derived from the data so they can't go stale
+    var countries = [];
+    Q.forEach(function (q) {
+      var c = String(q.place).split(",").pop().trim();
+      if (countries.indexOf(c) === -1) countries.push(c);
+    });
+    var cap = $("jmap-count");
+    if (cap) cap.innerHTML = Q.length + " qualifications · <b>" + countries.length + " countries</b>";
+
     var total = 0;
-    for (var i = 0; i < D.length - 1; i++) total += haversine(D[i].coords, D[i + 1].coords);
+    for (var i = 0; i < Q.length - 1; i++) total += haversine(Q[i].coords, Q[i + 1].coords);
     var dist = $("jmap-dist");
-    if (dist) dist.textContent = Math.round(total / 100) * 100 + " km";
+    if (dist) dist.textContent = (Math.round(total / 100) * 100).toLocaleString() + " km";
 
     var map = L.map("journey", { scrollWheelZoom: true, attributionControl: false, worldCopyJump: true })
                 .setView([36, -25], 2);
@@ -297,26 +326,28 @@
                          iconSize: [22, 22], iconAnchor: [11, 11] });
     }
 
-    var degreeLayer = L.layerGroup(), siteLayer = L.layerGroup();
+    var qLayer = L.layerGroup(), aLayer = L.layerGroup();
 
-    for (var j = 0; j < D.length - 1; j++) {
-      L.polyline(arc(D[j].coords, D[j + 1].coords),
-        { color: "#FF5C8A", weight: 1.6, opacity: .75, dashArray: "5 6" }).addTo(degreeLayer);
+    for (var j = 0; j < Q.length - 1; j++) {
+      L.polyline(arc(Q[j].coords, Q[j + 1].coords),
+        { color: "#FF5C8A", weight: 1.6, opacity: .75, dashArray: "5 6" }).addTo(qLayer);
     }
-    D.forEach(function (d, k) {
-      L.marker(d.coords, { icon: pin(k + 1) }).addTo(degreeLayer)
-       .bindPopup("<strong>" + esc(d.school) + "</strong><br>" + esc(d.degree) + "<br><em>" + esc(d.place) + "</em>");
+    Q.forEach(function (q, k) {
+      L.marker(q.coords, { icon: pin(k + 1) }).addTo(qLayer)
+       .bindPopup("<strong>" + esc(q.school) + "</strong><br>" + esc(q.degree) + "<br><em>" + esc(q.place) + "</em>");
     });
-    S.forEach(function (s) {
-      L.marker(s.coords, { icon: pin("◆", "site") }).addTo(siteLayer)
-       .bindPopup("<strong>" + esc(s.title) + "</strong><br>" + esc(s.blurb));
+    A.forEach(function (a) {
+      L.marker(a.coords, { icon: pin("◆", "site") }).addTo(aLayer)
+       .bindPopup("<strong>" + esc(a.title) + "</strong><br>" + esc(a.blurb));
     });
 
-    degreeLayer.addTo(map);
-    L.control.layers(null, { "Degrees": degreeLayer, "Field sites": siteLayer },
-                     { collapsed: false, position: "topright" }).addTo(map);
+    qLayer.addTo(map);
+    var overlays = {};
+    overlays[lab.qualifications] = qLayer;
+    overlays[lab.affiliations]   = aLayer;
+    L.control.layers(null, overlays, { collapsed: false, position: "topright" }).addTo(map);
 
-    if (D.length) map.fitBounds(L.latLngBounds(D.map(function (d) { return d.coords; })).pad(0.35));
+    if (Q.length) map.fitBounds(L.latLngBounds(Q.map(function (q) { return q.coords; })).pad(0.35));
     setTimeout(function () { map.invalidateSize(); }, 250);
   }
 
@@ -335,12 +366,20 @@
     els.forEach(function (e) { io.observe(e); });
   }
 
+  /* --------------------------------------------------------- MAP KEY LABELS */
+  function initMapKey() {
+    var lab = SITE.mapLabels || {};
+    var a = $("jkey-q"), b = $("jkey-a");
+    if (a) a.textContent = lab.qualifications || "Qualifications";
+    if (b) b.textContent = lab.affiliations || "Affiliations";
+  }
+
   /* ------------------------------------------------------------------ RUN */
   function boot() {
     if (typeof SITE === "undefined") { console.error("data.js failed to load"); return; }
-    renderHero(); renderOpenData(); renderAbout(); renderResearch();
-    renderPubs(); renderHonors(); renderOutreach(); renderEducation(); renderContact();
-    initNav(); initReveal();
+    renderHero(); renderSciComm(); renderAbout(); renderResearch();
+    renderPubs(); renderHonors(); renderEducation(); renderContact();
+    initNav(); initMapKey(); initReveal();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

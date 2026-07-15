@@ -14,9 +14,9 @@
 <meta property="og:title" content="Barira Rashid — Remote Sensing & Geospatial AI" />
 <meta property="og:description" content="Mapping farms, water, and habitats from orbit. PhD scholar at the University of Arkansas & NSF STEPS Center." />
 <!-- EDIT: after you go live, put your real URL here -->
-<meta property="og:url" content="https://barira02.github.io/" />
+<meta property="og:url" content="https://YOURUSERNAME.github.io/" />
 <meta name="twitter:card" content="summary" />
-<link rel="canonical" href="https://barira02.github.io/" />
+<link rel="canonical" href="https://YOURUSERNAME.github.io/" />
 
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
 
@@ -32,11 +32,11 @@
   <div class="wrap">
     <a class="brand" href="#top"><span class="glyph"><span></span><span></span></span><span id="brand-name">Barira Rashid</span></a>
     <div class="nav-links">
-      <a href="#data">Open data</a>
+      <a href="#scicomm">Science comm</a>
       <a href="#about">About</a>
       <a href="#research">Research</a>
       <a href="#publications">Publications</a>
-      <a href="#honors">Honors</a>
+      <a href="#honors">Awards</a>
       <a href="#contact">Contact</a>
     </div>
   </div>
@@ -48,12 +48,12 @@
     <div class="hero-copy reveal" id="hero-copy"><!-- rendered from data.js --></div>
     <div class="jmap-panel reveal">
       <div class="jmap-frame">
-        <div class="jmap-cap"><span>Four degrees · <b>three countries</b></span><span id="jmap-dist"></span></div>
+        <div class="jmap-cap"><span id="jmap-count">Qualifications</span><span id="jmap-dist"></span></div>
         <div id="journey"></div>
       </div>
       <div class="jkey">
-        <span><i style="background:#FF5C8A"></i>Degrees</span>
-        <span><i style="background:#19C7B6"></i>Field sites</span>
+        <span><i style="background:#FF5C8A"></i><b id="jkey-q">Qualifications</b></span>
+        <span><i style="background:#19C7B6"></i><b id="jkey-a">Affiliations</b></span>
         <span class="jkey-hint">toggle layers, top right ↗</span>
       </div>
       <div class="jmap-foot">
@@ -64,13 +64,14 @@
   </div>
 </header>
 
-<!-- OPEN DATA -->
-<section id="data">
+<!-- SCIENCE COMMUNICATION -->
+<section id="scicomm">
   <div class="wrap reveal">
-    <div class="legend teal">Open data</div>
-    <h2 class="section-title">Data you can <em>download</em></h2>
-    <p class="section-sub">Published, citable datasets and open packages — because a result you can't rebuild isn't much of a result.</p>
-    <div class="od-grid" id="od-grid"></div>
+    <div class="legend teal">Science Communication</div>
+    <h2 class="section-title">Beyond the <em>paper</em></h2>
+    <p class="section-sub">Story maps, podcasts, essays, and open datasets — the work that leaves the journal and goes looking for a reader.</p>
+    <div class="sc-filters" id="sc-filters"></div>
+    <div class="od-grid" id="sc-grid"></div>
   </div>
 </section>
 
@@ -103,18 +104,9 @@
 <!-- HONORS -->
 <section id="honors">
   <div class="wrap reveal">
-    <div class="legend">Honors &amp; Awards</div>
-    <h2 class="section-title">Recognition</h2>
+    <div class="legend gold">Achievements &amp; Awards</div>
+    <h2 class="section-title">Achievements &amp; <em>awards</em></h2>
     <div class="honors" id="honor-grid"></div>
-  </div>
-</section>
-
-<!-- SCIENCE COMMUNICATION -->
-<section id="outreach">
-  <div class="wrap reveal">
-    <div class="legend teal">Science Communication</div>
-    <h2 class="section-title">Beyond the <em>paper</em></h2>
-    <div class="out-list" id="out-list"></div>
   </div>
 </section>
 
@@ -122,8 +114,8 @@
 <section id="education">
   <div class="wrap reveal">
     <div class="legend hollow">Education</div>
-    <h2 class="section-title">Trained across three <em>countries</em></h2>
-    <p class="section-sub">The same stops you can click on the map above.</p>
+    <h2 class="section-title">Two countries, four <em>qualifications</em></h2>
+    <p class="section-sub">The same stops you can click on the map at the top.</p>
     <div class="edu" id="edu-list"></div>
   </div>
 </section>
