@@ -39,7 +39,7 @@ const SITE = {
     cv: ""
   },
 
-   /* -------------------------------------------------------------- OPEN DATA */
+/* -------------------------------------------------------------- OPEN DATA */
   /* Published datasets & open packages.
      url:       "" => card shows a tidy "link pending" state instead of a dead link
      citation:  "" => the "Copy citation" button is hidden for that card
@@ -62,9 +62,9 @@ const SITE = {
       title:    "Landslide Risk Data Package",
       blurb:    "An open data studio package mapping landslide susceptibility from Earth-observation data, developed with Earth-science review boards, USGS, and humanitarian NGOs.",
       meta:     ["Open access", "Data studio"],
-      url:      "",                 // EDIT: paste the package / repository URL
+      url:      "https://nasalifelines.org/hfs-data-series/landslide-risk-and-monitoring/",// EDIT: paste the package / repository URL
       linkLabel:"Open package ↗",
-      citation: "https://nasalifelines.org/hfs-data-series/landslide-risk-and-monitoring/",                 // EDIT: optional — paste a citation to enable the copy button
+      citation: "",                 // EDIT: optional — paste a citation to enable the copy button
       thumb:    "terrain"
     },
     {
